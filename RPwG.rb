@@ -28,4 +28,4 @@ while password_length > 0 do
 	password_length -= 1
 end
 
-puts "\n" + password.map(&:inspect).join('').to_s.gsub('"', '') + "\n" + "\n"
+puts "\n" + password.map(&:inspect).join('').to_s.gsub('"', '') + "\n" * 3
