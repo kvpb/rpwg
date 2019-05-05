@@ -1,21 +1,43 @@
-# _RPwG_
-##### Version 1.00
-**Franco-US-american, 'QWAZERTY', pseudorandom password generator**
+```
+Karl V.P. Bertin
+X XXX XX XXX X XXXXXX
+75005 Paris, France
++336XXXXXXXX
+local-part@domain
 
-<p align='center'><a href='https://github.com/kvpb/.files/blob/master/lib/scpt/RPwG.rb'><img src='https://gist.githack.com/kvpb/543e66fc06e322658f5877e9e2f77cda/raw/08ecb3022f7c7de3c1a16b05e59af04b92e19af5/RPwG.svg'></a></p>
+                                                          A Paris, le 1 mai 2019
 
-#### How-to
+                          ,-----, ,-----,         ,-----,
+                         / /'/ / / / / / ,-,-,-, / /''-'
+                        / / | | / ,---' / / / / / /_/'/
+                       '-'  '-''-'     '-----' '-----'
+                      Random Password Generator  1.00
 
-**NB:** Ruby must be installed.
+                              Instructions Manual
 
-1. Launch a terminal emulator.
-2. Run the `ruby ${path}/RPwG.rb` command.
-3. Enter a password length.
-4. [Optional] Enter `yes` if you want the password to exclude characters differing from qwerty to azerty keyboards.
-5. Enjoy your copy-pastable password!
+          RPwG is a franco-US-american -- 'QWAZERTY' -- random password 
+generator. This program written in Ruby pseudorandomly generates passwords whose
+length and US QWERTY-FR AZERTY portability are at the user's discretion. NB: 
+Ruby must be installed.
+          An online version 2 was planned to have a GUI written in HTML5, CSS3 
+and JavaScript, mimicking a powered-on Twiggy Mac in which only enter the 
+password's length and set its 'qwazertyness' --- to unrestrict users from Ruby 
+as a requirement. Albeit the graphic design part is 100% done, the development 
+has been canceled until further notice.
+          The files in this zip archive constitute the first official release of
+the RPwG program. Currently, they are not documented. RPwG has been designed so 
+that it is self-explanatory. There are a few points which should be noted, 
+particularly by any novice user.
 
-#### Author
+          1.	Launch a terminal emulator, e.g. Terminal.
+          2.	Drag-and-drop the RPwG.rb file into the terminal emulator's 
+            	window.
+          3.	Press Enter.
+          4.	Follow the on-screen instructions.
+          5.	Enjoy your copy-pastable password!
 
-<p align='center'><a href='http://karlbertin.com/'><img src='https://gist.githack.com/kvpb/bfed748ac5c509985c89ea613a2bfd02/raw/8c0b311b7c848fabddf61672ba6bb72c8754fed9/karlbertinssymbol.svg'></a><br>
-<b>Karl 'Kabe' Bertin `<code>kvpb</code>`</b><br>
-<a href='https://www.linkedin.com/in/karlbertin'>LinkedIn</a> | <a href='https://www.facebook.com/karlbertin'>Facebook</a> | <a href='https://www.instagram.com/karlbertin/'>Instagram</a></p>
+          Should problems arise with this software, please communicate them to 
+the author, or open an issue at https://github.com/kvpb/RPwG/issues.
+
+                                                       Karl 'Kabe' Bertin `kvpb`
+```
