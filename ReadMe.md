@@ -11,7 +11,7 @@ local-part@domain
                          / /'/ / / / / / ,-,-,-, / /''-'
                         / / | | / ,---' / / / / / /_/'/
                        '-'  '-''-'     '-----' '-----'
-                      Random Password Generator  1.00
+                      Random Password Generator  1.01
 
                               Instructions Manual
 
