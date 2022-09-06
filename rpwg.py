@@ -5,8 +5,185 @@ import getopt
 import re
 import random
 
+class ANSIES:
+	# SGR parameters
+	reset = '\x1B[0m' # reset or normal
+	bold = '\x1B[1m' # bold or increased intensity
+	dim = '\x1B[2m' # faint, decreased density or dim
+	italic = '\x1B[3m' # italic
+	underline = '\x1B[4m' # underline
+	slowblink = '\x1B[5m' # slow blink
+	rapidblink = '\x1B[6m' # rapid blink
+	invert = '\x1B[7m' # reverse video or invert
+	hide = '\x1B[8m' # conceal or hide
+	strike = '\x1B[9m' # crossed-out or strike
+	defaultfont = '\x1B[10m' # primary (default) font
+	alternativefont1 = '\x1B[11m' # alternative font
+	alternativefont2 = '\x1B[12m' # alternative font
+	alternativefont3 = '\x1B[13m' # alternative font
+	alternativefont4 = '\x1B[14m' # alternative font
+	alternativefont5 = '\x1B[15m' # alternative font
+	alternativefont6 = '\x1B[16m' # alternative font
+	alternativefont7 = '\x1B[17m' # alternative font
+	alternativefont8 = '\x1B[18m' # alternative font
+	alternativefont9 = '\x1B[19m' # alternative font
+	Fraktur = '\x1B[20m' # Fraktur (Gothic)
+	doublyunderlined = '\x1B[21m' # doubly underlined or not bold
+	normalintensity = '\x1B[22m' # normal intensity
+	neitheritalicnorblackletter = '\x1B[23m' # neither italic nor blackletter
+	notunderlined = '\x1B[24m' # not underlined
+	notblinking = '\x1B[25m' # not blinking
+	proportionalspacing = '\x1B[26m' # proportional spacing
+	notreversed = '\x1B[27m' # not reversed
+	reveal = '\x1B[28m' # 
+	notcrossedout = '\x1B[29m' # not crossed out
+	foregroundcolor1 = '\x1B[30m' # set foreground color
+	foregroundcolor2 = '\x1B[31m' # set foreground color
+	foregroundcolor3 = '\x1B[32m' # set foreground color
+	foregroundcolor4 = '\x1B[33m' # set foreground color
+	foregroundcolor5 = '\x1B[34m' # set foreground color
+	foregroundcolor6 = '\x1B[35m' # set foreground color
+	foregroundcolor7 = '\x1B[36m' # set foreground color
+	foregroundcolor8 = '\x1B[37m' # set foreground color
+	foregroundcolor9 = '\x1B[38m' # set foreground color, next arguments are 5;n or 2;r;g;b
+	foregroundcolor0 = '\x1B[39m' # default foreground color
+	backgroundcolor1 = '\x1B[40m' # set background color
+	backgroundcolor2 = '\x1B[41m' # set background color
+	backgroundcolor3 = '\x1B[42m' # set background color
+	backgroundcolor4 = '\x1B[43m' # set background color
+	backgroundcolor5 = '\x1B[44m' # set background color
+	backgroundcolor6 = '\x1B[45m' # set background color
+	backgroundcolor7 = '\x1B[46m' # set background color
+	backgroundcolor8 = '\x1B[47m' # set background color
+	backgroundcolor9 = '\x1B[48m' # set background color, next arguments are 5;n or 2;r;g;b
+	backgroundcolor0 = '\x1B[49m' # default background color
+	disableproportionalspacing = '\x1B[50m' # disable proportional spacing
+	framed = '\x1B[51m' # framed
+	encircled = '\x1B[52m' # encircled
+	overlined = '\x1B[53m' # overlined
+	neitherframednorencircled = '\x1B[54m' # neither framed nor encircled
+	notoverlined = '\x1B[55m' # not overlined
+	underlinecolor9 = '\x1B[58m' # set underline color, next arguments are 5;n or 2;r;g;b
+	underlinecolor0 = '\x1B[59m' # default underline color
+	rightsideline = '\x1B[60m' # ideogram underline or right side line
+	doublerightsideline = '\x1B[61m' # ideogram double underline or double line on the right side
+	leftsideline = '\x1B[62m' # ideogram overline or left side line
+	doubleleftsideline = '\x1B[63m' # ideogram double overline or double line on the left side
+	ideogramstressmarking = '\x1B[64m' # ideogram stress marking
+	noideogramattributes = '\x1B[65m' # no ideogram attributes
+	superscript = '\x1B[73m' # superscript
+	subscript = '\x1B[74m' # subscript
+	neithersuperscriptnorsubscript = '\x1B[75m' # neither superscript nor subscript
+	brightforegroundcolor0 = '\x1B[90m' # set bright foreground color
+	brightforegroundcolor1 = '\x1B[91m' # set bright foreground color
+	brightforegroundcolor2 = '\x1B[92m' # set bright foreground color
+	brightforegroundcolor3 = '\x1B[93m' # set bright foreground color
+	brightforegroundcolor4 = '\x1B[94m' # set bright foreground color
+	brightforegroundcolor5 = '\x1B[95m' # set bright foreground color
+	brightforegroundcolor6 = '\x1B[96m' # set bright foreground color
+	brightforegroundcolor7 = '\x1B[97m' # set bright foreground color
+	brightbackgroundcolor0 = '\x1B[100m' # set bright background color
+	brightbackgroundcolor1 = '\x1B[101m' # set bright background color
+	brightbackgroundcolor2 = '\x1B[102m' # set bright background color
+	brightbackgroundcolor3 = '\x1B[103m' # set bright background color
+	brightbackgroundcolor4 = '\x1B[104m' # set bright background color
+	brightbackgroundcolor5 = '\x1B[105m' # set bright background color
+	brightbackgroundcolor6 = '\x1B[106m' # set bright background color
+	brightbackgroundcolor7 = '\x1B[107m' # set bright background color
+	# 3- and 4-bit colors
+	# = '\x1B[m' # 
+	# 8-bit colors
+	# = '\x1B[m' # 
+	# 24-bit colors
+	# = '\x1B[m' # 
+	
+	def disable(self):
+		self.reset = ''
+		self.bold = ''
+		self.dim = ''
+		self.italic = ''
+		self.underline = ''
+		self.slowblink = ''
+		self.rapidblink = ''
+		self.invert = ''
+		self.hide = ''
+		self.strike = ''
+		self.defaultfont = ''
+		self.alternativefont1 = ''
+		self.alternativefont2 = ''
+		self.alternativefont3 = ''
+		self.alternativefont4 = ''
+		self.alternativefont5 = ''
+		self.alternativefont6 = ''
+		self.alternativefont7 = ''
+		self.alternativefont8 = ''
+		self.alternativefont9 = ''
+		self.Fraktur = ''
+		self.doublyunderlined = ''
+		self.normalintensity = ''
+		self.neitheritalicnorblackletter = ''
+		self.notunderlined = ''
+		self.notblinking = ''
+		self.proportionalspacing = ''
+		self.notreversed = ''
+		self.reveal = ''
+		self.notcrossedout = ''
+		self.foregroundcolor1 = ''
+		self.foregroundcolor2 = ''
+		self.foregroundcolor3 = ''
+		self.foregroundcolor4 = ''
+		self.foregroundcolor5 = ''
+		self.foregroundcolor6 = ''
+		self.foregroundcolor7 = ''
+		self.foregroundcolor8 = ''
+		self.foregroundcolor9 = ''
+		self.foregroundcolor0 = ''
+		self.backgroundcolor1 = ''
+		self.backgroundcolor2 = ''
+		self.backgroundcolor3 = ''
+		self.backgroundcolor4 = ''
+		self.backgroundcolor5 = ''
+		self.backgroundcolor6 = ''
+		self.backgroundcolor7 = ''
+		self.backgroundcolor8 = ''
+		self.backgroundcolor9 = ''
+		self.backgroundcolor0 = ''
+		self.disableproportionalspacing = ''
+		self.framed = ''
+		self.encircled = ''
+		self.overlined = ''
+		self.neitherframednorencircled = ''
+		self.notoverlined = ''
+		self.underlinecolor9 = ''
+		self.underlinecolor0 = ''
+		self.rightsideline = ''
+		self.doublerightsideline = ''
+		self.leftsideline = ''
+		self.doubleleftsideline = ''
+		self.ideogramstressmarking = ''
+		self.noideogramattributes = ''
+		self.superscript = ''
+		self.subscript = ''
+		self.neithersuperscriptnorsubscript = ''
+		self.brightforegroundcolor0 = ''
+		self.brightforegroundcolor1 = ''
+		self.brightforegroundcolor2 = ''
+		self.brightforegroundcolor3 = ''
+		self.brightforegroundcolor4 = ''
+		self.brightforegroundcolor5 = ''
+		self.brightforegroundcolor6 = ''
+		self.brightforegroundcolor7 = ''
+		self.brightbackgroundcolor0 = ''
+		self.brightbackgroundcolor1 = ''
+		self.brightbackgroundcolor2 = ''
+		self.brightbackgroundcolor3 = ''
+		self.brightbackgroundcolor4 = ''
+		self.brightbackgroundcolor5 = ''
+		self.brightbackgroundcolor6 = ''
+		self.brightbackgroundcolor7 = ''
+
 def sub( l, t ):
-  #s = ''
+  #s = ""
   a_f = [
            '!',  '$',  '%',  '&', '\'',  '(',  ')',  '*',  '+',  ',',  '-',
            '.',  '/',  '0',  '1',  '2',  '3',  '4',  '5',  '6',  '7',  '8',
@@ -24,14 +201,14 @@ def sub( l, t ):
            ']',  '^',  '`',  'a',  'm',  'q',  'w',  'z',  '{',  '|',  '}',
            '~'
         ] # in ASCII order.
-  #a = list(set( a_f )^set( a_t ))
-  #l_a = len( a )
+  #a = []
+  #l_a = 0
   
   if    (  t ==  1 ):
     a_f = list(set( a_f )^set( a_t ))
   
   l_a = len( a_f )
-
+  
   s = ''
   while (  0  <  l ):
     s += str( a_f[ random.randint( 0, l_a - 1 ) ] )
@@ -39,54 +216,44 @@ def sub( l, t ):
   
   return s
 
-#print(sub( random.randint( 0, 80 ), random.randint( 0, 1 ) )) #print(sub( 8, 1 )) #	debug
-
 def alt():
   s = """RANDOM      PASSWORD     GENERATOR
    ,-----, ,-----,         ,-----,
   / /'/ / / /'/ / ,-,-,-, / /''-'
  / / | | / ,---' / / / / / /_/'/
 '-'  '-''-'     '-----' '-----'
-V  E  R  S  I  O  N     1  .  5  0"""
-  #l = 0 #l = input("password length:\t")
-  #m = "" #m = input("QWAZERTY mode:\t")
+V  E  R  S  I  O  N     1  .  5  1"""
+  #l = 0
+  #m = ""
   #t = 0
   
-  print(s)
+  print(ANSIES.dim + s + ANSIES.reset)
   
   try:
-    l = int( input("password length:\t") )
+    l = int( input(ANSIES.bold + "password length:\t" + ANSIES.reset) )
   except:
     l = random.randint( 8, 127 )
-  #l = input("password length:\t")
-  #print( l ) #	debug
   
   try:
-    m = input("QWAZERTY mode [yN]:\t")
+    m = input(ANSIES.bold + "QWAZERTY mode [yN]:\t" + ANSIES.reset)
   except:
     m = 'NO'
-  #m = input("QWAZERTY mode [yN]:\t")
-  #print(m)#	debug
   
-  #print( bool(re.match(r'\b[Yy]([Ee][Ss])?\b', str(m))) ) #	debug
   if bool(re.match(r'\b[Yy]([Ee][Ss])?\b', str(m))):
     t = 1
   else:
     t = 0
-  #print( t ) #	debug
   
   return sub( l, t )
 
-#print(alt()) #	debug
-
 def main():
-  #v_a = 
+  #v_a = []
   l = 0
   t = 0
   s = """rpwg.py --length=12 --mode=q
         --random
         --interactive
-        --help""" #s = "RTFM. Don't worry; I kept it simple for you."
+        --help"""
   
   try:
     v_o, v_p = getopt.getopt(sys.argv[1:], "l:m:rih", ["length=", "mode=", "random", "interactive", "help"])
@@ -120,38 +287,35 @@ def main():
       s = alt()
       print(s)
       return 0
-    #else:
-    #  l = random.randint( 8, 127 )
-    #  t = random.randint( 0, 1 )
   s = sub( l, t )
-  print(s)
+  print(ANSIES.reset + s)
 
 if __name__ == "__main__":
   main()
 
 #	rpwg.py
 #	Random Password Generator
-#	Version 1.50
+#	Version 1.51
 #
-#	Karl V. P. B. `kvpb`
+#	Karl V. P. B. `kvpb` AKA Karl Thomas George West `ktgw`
 #	+1 (DDD) DDD-DDDD
 #	+33 A BB BB BB BB
 #	local-part@domain
-#	https://www.linkedin.com/in/karlbertin
-#	https://twitter.com/kvpbx
+#	local-part@domain
+#	https://www.linkedin.com/in/
+#	https://twitter.com/ktgwkvpb
 #	https://github.com/kvpb
-#	https://www.instagram.com/add/karlbertin
 #	https://vm.tiktok.com/ZSwAmcFh/
-#	
-#	Women, they will come, and they will go.
-#	When the rain washes you clean, you'll know.
-#	Oh, thunder only happens when it's raining.
-#	Players only love you when they're playing.
-#	
-#	... And the music stops.
-#	This is funny, if you think about it. I was gonna do it this time for real. But the carbine was not under the bed. I did not find the rifle. Nor did I find the mag either. Fuck me, right? She said we never left it underneath the bed. Maybe. She never really lies to me, so I guess she told me the truth. Thought I had kept that bloody thing. Perhaps never had it to begin with. Can hardly tell. That whole COVID-19 fuckery messed my head up pretty bad. I usually am lucky, but I would really like to see the luck into this. Depressing sucks. Believe me, I have not missed that crap all those years. I doubt I will ever have the balls again, even if I was depressing once too many once more, had the rifle loaded, had gone through a lot, and Ritalin wore off at the same time. Screw this shit. Rifle rounds seem to be some of the best pills against that. Could barely work any worse, except if you survive, but I have never seen anyone manage to pull that off with 7.62. Oh well. Could be worse. We finally get to see the freaking Sun again. I feel better, sorta-kinda-ish. I gotta get the hell outta here before winter. Or else this will not go well at all. If I cannot make it to California in time, I need to at least reach Dublin or Vancouver. I have been rotting in this fourth-world-country-to-be shithole for far too long. I will be able to immigrate to the United States more easily from there. Then will have to wait 7 years for the US citizenship. It is what it is. Gotta play by the rules. I really do not want to live here anymore. People are rude. The culture is inflated horseshit. The weather is dogpiss. Careers are rubbish. Jobs pay shit. The ed sys is fucked. Its academics make everyone cringe. Fonctionnaires are the Antichrist. Nothing ever happens here. Le la lu french baguette with a glass of pinard and ho ho ho le beret de Madame, this is all turbogarbage. Graveyards are funnier, and those do not exactly make me wanna party hard already. Yeah. Not happy. 1 green dot on TripAdvisor. Would not recommend. I can milk better from my meat, a gym and an OnlyFans, and even that option interests me more. I just wanna drive through Utah, swim in Hawaii... But why the fuck am I here? Why am I stuck here in fucking France? Why do people in these parts have to be complete assholes? Why did I have to start my education over all by myself alone for nothing? Why did they waste 20 years of my fucking life? Why did we have to pay for everything, when the other motherfuckers got anything for free? Why will you never get any better than the scraps of inept top school graduates here? I am gonna go to bed.
+#
+#	I can help you!
+#	I can understand!
+#	I can help you!
+#	... To the promised land!
+#	I'm _your_ helping hand,
+#	your midnight man!
+#	Your midnight man!
 
-#	Copyright 2022 Karl V. P. Bertin
+#	Copyright 2022 Karl Vincent Pierre Bertin
 #
 #	Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 #
