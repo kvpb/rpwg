@@ -1,8 +1,12 @@
+<p align='center'><a href='https://github.com/kvpb/.files/blob/master/bin/rpwg.py'><img src='https://gistcdn.githack.com/kvpb/c9d1aa35c62862e73c50836dc49dbc66/raw/5c32c06d72b0169b6ed688efdd99d1d3d6d2eb31/rpwg.svg'></a></p>
+
+# Random Password Generator<br>`rpwg.py`
+
 ```
 Karl V. P. B.
 X XXXXX XXXXXXXXXXXXXXXXXXXXXX
-75006 Paris, France
-+33 A BB BB BB BB
+XXXXX XXXXX, XXXXXX
++1 (DDD) DDD-DDDD
 local-part@domain
 
                                      A XXXXXXXXXXXXXXXXX, le 1 mai 2022
