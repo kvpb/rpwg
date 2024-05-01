@@ -4,22 +4,23 @@
 
 ```
 Karl V. P. B.
-X XXXXX XXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXX XX
+XX XXX XX XXX
 XXXXX XXXXX, XXXXXX
-+1 (DDD) DDD-DDDD
++33 A BB BB BB BB
 local-part@domain
 
-                                     A XXXXXXXXXXXXXXXXX, le 1 mai 2022
+                                                  A XXXXX, l'1 mai 2024
 
                        ,-----, ,-----,         ,-----,
                       / /'/ / / /_/ / ,-,-,-, / /''-'
                      / / | | / ,---' / / / / / /_/'/
                     '-'  '-''-'     '-----' '-----'
-                   Random Password Generator  1.50
+                   Random Password Generator  1.60
 
                            Instructions Manual
 
-          RPwG is a franco-US-american-- 'QWAZERTY'-- pseudorandom
+          RPwG is a French-American-- 'QWAZERTY'-- pseudorandom
 password generator. This program written in Python pseudorandomly
 generates passwords whose length and US QWERTY-FR AZERTY portability
 are at the user's discretion. NB: Python 3 must be installed.
@@ -31,6 +32,8 @@ be noted, particularly by any novice user.
           rpwg.py 
                   -l, --length=${l}
                   -m, --mode="${s}"
+                  -1, --1stlayout="${s}"
+                  -2, --2ndlayout="${s}"
                   -i, --interactive
                   -r, --random
                   -h, --help
@@ -38,14 +41,26 @@ be noted, particularly by any novice user.
           -l, --length=${l}
                 Set the length of the password. l is an integer number.
                 If the user does not set the mode along, the program
-                will randomly set it. This option overrides all others.
+                randomly sets it. This option overrides all others.
 
           -m, --mode="${s}"
                 Set the portability mode of the password. s is a string
                 of characters like 'q' or "QWAZERTY" for cross-layout
                 compatibility and 'a', "AZERTY" or even '' for none. If
                 the user does not set the length along, the program
-                will randomly set it. This option overrides all others.
+                randomly sets it. This option overrides all others.
+
+          -1, --1stlayout="${s}"
+                Set the first layout. s is a string of characters like
+                "us" for ANSI QWERTY or "fr" for Apple AZERTY. If the
+                user does not set two different layouts, the program
+                defaults to ANSI QWERTY.
+
+          -2, --2ndlayout="${s}"
+                Set the second layout. s is a string of characters like
+                "us" for ANSI QWERTY or "fr" for Apple AZERTY. If the
+                user does not set two different layouts, the program
+                defaults to ANSI QWERTY.
 
           -r, --random
                 Randomly set the length and portability. This option
