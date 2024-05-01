@@ -1,6 +1,6 @@
 The 3-Clause BSD License
 
-Copyright 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022 Karl V. P. Bertin
+Copyright 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Karl Vincent Pierre Bertin AKA Karl Thomas George West
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
