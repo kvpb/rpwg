@@ -4,8 +4,9 @@ import sys
 import getopt
 import re
 import random
+import secrets
 
-class ANSIES:
+class ANSIES: # ANSI escape sequences
   # SGR parameters
   reset = "\x1B[0m" # reset or normal
   bold = "\x1B[1m" # bold or increased intensity
@@ -97,7 +98,7 @@ class ANSIES:
   # 24-bit colors
   # = "\x1B[m" # 
   
-  def disable(self):
+  def disable( self ):
     self.reset = ""
     self.bold = ""
     self.dim = ""
@@ -192,6 +193,9 @@ set_character = [
     'x',  'y',  'z',  '{',  '|',  '}',  '~'
 ] # in ASCII order, no 032, '"', '\' or '#'.
 matrix_key = {
+  "Apple US QWERTY": [
+    
+  ],
   "ANSI QWERTY": [
       1,    4,    5,    7,   39,    9,   10,    8,   12,   49,   11,   50,   51,   10,
       1,    2,    3,    4,    5,    6,    7,    8,    9,   38,   38,   49,   12,   50,
@@ -201,6 +205,12 @@ matrix_key = {
      35,   36,   37,   48,   47,   23,   24,   15,   18,   30,   19,   21,   45,   16,
      43,   20,   42,   25,   27,   26,    0
   ],
+  "Apple GB QWERTY": [
+
+  ],
+  "ISO QWERTY": [
+
+  ],
   "Apple AZERTY": [
       8,   26,   39,    1,    4,    5,   11,   26,   52,   49,   12,   50,   51,   10,
       1,    2,    3,    4,    5,    6,    7,    8,    9,   51,   50,   42,   52,   42,
@@ -209,7 +219,16 @@ matrix_key = {
       5,   11,   25,   12,   40,   15,   47,   45,   31,   17,   32,   33,   34,   22,
      35,   36,   37,   38,   48,   23,   24,   29,   18,   30,   19,   21,   46,   43,
      44,   20,   16,    5,   37,   11,   48
-  ]
+  ],
+  "ISO AZERTY": [
+
+  ],
+  "Apple QWERTZ": [
+
+  ],
+  "ISO QWERTZ": [
+
+  ],
 }
 #set_trimmed = [
 #  '!',  '$',  '%',  '&', '\'',  '(',  ')',  '*',  ',',  '-',  '.', '/',  ':',  ';',
@@ -217,43 +236,70 @@ matrix_key = {
 #  'w',  'z',  '{',  '|',  '}', '~'
 #] # in ASCII order.
 
-def characters_set(id_layout_1st="", id_layout_2nd=""):
-#  if id_layout_1st == "" or id_layout_2nd == "":
-#    return set_character
+alias_layout = {
+  "apus": "Apple US QWERTY", # Apple US QWERTY
+  "us":   "ANSI QWERTY", # ANSI US QWERTY
+  "apuk": "Apple GB QWERTY",
+  "apgb": "Apple GB QWERTY",
+  # Apple GB QWERTY
+  "uk":   "ISO QWERTY",
+  "gb":   "ISO QWERTY",
+  # ISO GB QWERTY
+  "apfr": "Apple AZERTY", # Apple FR AZERTY
+  "fr":   "ISO AZERTY", # ISO FR AZERTY
+  "apde": "Apple QWERTZ", # Apple DE QWERTZ
+  "de":   "ISO QWERTZ", # ISO DE QWERTZ
+}
 
-  intersection_set = []
-  symmetricdifference_set = []
-  length_set = len( set_character )
+def set_characters( ids_layout: list[str] | None = None ) -> list[str]:
+  if ids_layout is None:
+    ids_layout = []
+  if not ids_layout:
+    return set_character
 
-  match id_layout_1st:
-    case "us": #bool(re.match(r'\b[Uu]([Ss])?\b', str(id_layout_1st))):
-      layout_1st = "ANSI QWERTY"
-    case "fr": #bool(re.match(r'\b[Ff]([Rr])?\b', str(id_layout_1st))):
-      layout_1st = "Apple AZERTY"
-    case "" | _:
-      layout_1st = "ANSI QWERTY"
-  match id_layout_2nd:
-    case "us": #bool(re.match(r'\b[Uu]([Ss])?\b', str(id_layout_2nd))):
-      layout_2nd = "ANSI QWERTY"
-    case "fr": #bool(re.match(r'\b[Ff]([Rr])?\b', str(id_layout_2nd))):
-      layout_2nd = "Apple AZERTY"
-    case "" | _:
-      layout_2nd = "ANSI QWERTY"
-  print(layout_1st, '\t', layout_2nd)
+  intersection_set: list[str] = []
+  symmetricdifference_set: list[str] = []
+  length_set: int = len( set_character )
+  ids_matrix_key: list[str] = [] #layouts
+  id_layout: str
+  id_matrix_key: str
+  ids_key: list[ int ]
+  index: int
+
+  id_layout = ""
+  for id_layout in ids_layout:
+    id_layout = str( id_layout ).strip().lower()
+    if id_layout in alias_layout:
+      ids_matrix_key.append( alias_layout[id_layout] )
+    else:
+      raise ValueError("RPwG doesn't know the layout " + id_layout + '.')
+    if ids_matrix_key[ -1 ] not in matrix_key:
+      raise ValueError("RPwG doesn't have the layout " + ids_matrix_key[ -1 ] + '.')
+    if len( matrix_key[ ids_matrix_key[ -1 ] ] ) != length_set:
+      raise ValueError("RPwG couldn't validate the matrix length for the layout " + ids_matrix_key[ -1 ] + '.')
+  print('\t'.join( ids_matrix_key ))
   index = 0
   while index < length_set:
-    print( index, '\t', set_character[ index ], '\t', matrix_key[layout_1st][ index ], '\t', matrix_key[layout_2nd][ index ] )
-    if matrix_key[layout_1st][ index ] != matrix_key[layout_2nd][ index ]:
-      print("\t\t", matrix_key[layout_1st][ index ], '\t', matrix_key[layout_2nd][ index ] )
+    ids_key = []
+    id_matrix_key = ""
+    for id_matrix_key in ids_matrix_key:
+      ids_key.append( matrix_key[ id_matrix_key ][ index ] )
+    print( index, '\t', set_character[ index ], '\t', '\t'.join( str( key ) for key in ids_key ) )
+    if len( set( ids_key ) ) != 1:
+      print("\t\t", '\t'.join( str( key ) for key in ids_key ) )
       symmetricdifference_set.append( set_character[ index ] )
     index += 1
   print( symmetricdifference_set, '\t', len( symmetricdifference_set ) )
-  intersection_set = list(set( set_character )^set( symmetricdifference_set )) #set_character = list(set( set_character )^set( set_trimmed ))
+  intersection_set = [
+    character
+    for character in set_character
+    if character not in symmetricdifference_set
+  ] #intersection_set = list(set( set_character )^set( symmetricdifference_set )) #set_character = list(set( set_character )^set( set_trimmed ))
   print( intersection_set, '\t', len( intersection_set ) )
   
   return intersection_set
 
-def password_stringtogether( length_password, set_character_password ):
+def stringtogether_password( length_password, set_character_password ):
   string_password = ""
   length_set_character = len( set_character_password )
   
@@ -263,7 +309,7 @@ def password_stringtogether( length_password, set_character_password ):
   
   return string_password
 
-def program_interactwith():
+def interactwith_program():
   string_splash = """RANDOM      PASSWORD     GENERATOR
    ,-----, ,-----,         ,-----,
   / /'/ / / /'/ / ,-,-,-, / /''-'
@@ -285,7 +331,7 @@ V  E  R  S  I  O  N     1  .  6  b"""
     length_password = random.randint( 8, 127 )
   
   try:
-    string_mode = input(ANSIES.bold + "QWAZERTY^TM mode, 'y' for \"yes\" or by default 'n' for \"no\":\t" + ANSIES.reset)
+    string_mode = input(ANSIES.bold + "QWAZERTY mode, 'y' for yes or by default 'n' for no:\t" + ANSIES.reset)
   except:
     string_mode = "NO"
   
@@ -306,11 +352,11 @@ V  E  R  S  I  O  N     1  .  6  b"""
     if id_layout_2nd == id_layout_1st:
       id_layout_1st = "us"
       id_layout_2nd = "fr"
-    set_password = characters_set(id_layout_1st, id_layout_2nd)
+    set_password = set_characters( [ id_layout_1st, id_layout_2nd ] )
   else:
     set_password = set_character
   
-  return password_stringtogether( length_password, set_password )
+  return stringtogether_password( length_password, set_password )
 
 def main():
   #vector_argument = []
@@ -333,9 +379,9 @@ def main():
     length_password = random.randint( 8, 127 )
     truth_mode = random.randint( 0, 1 )
     if truth_mode == 1:
-      string_password = password_stringtogether( length_password, characters_set("us", "fr") )
+      string_password = stringtogether_password( length_password, set_characters( [ "us", "apfr" ] ) )
     else:
-      string_password = password_stringtogether( length_password, characters_set("", "") )
+      string_password = stringtogether_password( length_password, set_characters() )
     print(string_help)
     return 0
   for option, parameter in vector_option:
@@ -360,22 +406,22 @@ def main():
       print(string_help)
       sys.exit()
     elif option in ("-i", "--interactive"):
-      string_password = program_interactwith()
+      string_password = interactwith_program()
       print(string_password)
       return 0
-  string_password = password_stringtogether( length_password, characters_set(id_layout_1st, id_layout_2nd) )
+  string_password = stringtogether_password( length_password, set_characters( [ id_layout_1st, id_layout_2nd ] ) )
   print(ANSIES.reset + string_password)
 
 if __name__ == "__main__":
   main()
 
 #	rpwg.py
-#	Random Password Generator
-#	1.6 beta
+#	random password generator
+#	1.61 beta
 #
-#	Karl V. P. B. `kvpb`	Karl Thomas George West `ktgw`
-#	+33 A BB BB BB BB		+1 (DDD) DDD-DDDD
-#	local-part@domain		local-part@domain
+#	Karl V. P. B. `kvpb`  Karl Thomas George West `ktgw`
+#	+33 A BB BB BB BB     +1 (DDD) DDD-DDDD
+#	local-part@domain	    local-part@domain
 #	kvpb.fr
 #	https://x.com/ktgwkvpb
 #	https://github.com/kvpb
@@ -388,7 +434,7 @@ if __name__ == "__main__":
 #	your midnight man!
 #	Your midnight man!'
 
-#	Copyright 2024 Karl Vincent Pierre Bertin
+#	Copyright 2026 Karl Vincent Pierre Bertin
 #
 #	Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 #
