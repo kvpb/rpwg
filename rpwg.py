@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-import secrets
-import random
-import re
-import getopt
-import sys
+from secrets import choice
+from random import randint
+from re import fullmatch
+from getopt import getopt, GetoptError
+from sys import argv, exit
 
 class ANSIES: # ANSI escape sequences
   # SGR parameters
@@ -183,7 +183,7 @@ class ANSIES: # ANSI escape sequences
     self.brightbackgroundcolor6 = ""
     self.brightbackgroundcolor7 = ""
 
-set_character: list[str] = [ # $(man ascii)
+set_character: list[str] = [
         '!',           '$', '%', '&','\'',
    '(', ')', '*', '+', ',', '-', '.', '/',
    '0', '1', '2', '3', '4', '5', '6', '7',
@@ -319,16 +319,16 @@ def set_characters( ids_layout: list[str] | None = None ) -> list[str]:
     ids_layout = []
   if not ids_layout:
     return set_character
-
+  
   intersection_set: list[str] = []
   symmetricdifference_set: list[str] = []
   length_set: int = len( set_character )
-  ids_matrix_key: list[str] = [] #layouts
+  ids_matrix_key: list[str] = [] #layouts = 
   id_layout: str
   id_matrix_key: str
   ids_key: list[str]
   character: str
-
+  
   id_layout = ""
   for id_layout in ids_layout:
     id_layout = str( id_layout ).strip().lower()
@@ -343,23 +343,31 @@ def set_characters( ids_layout: list[str] | None = None ) -> list[str]:
     id_matrix_key = ""
     for id_matrix_key in ids_matrix_key:
       if character not in matrix_key[ id_matrix_key ]:
+        symmetricdifference_set.append( character )
         break
       ids_key.append( matrix_key[ id_matrix_key ][ character ] )
     if len( ids_key ) == len( ids_matrix_key ) and len( set( ids_key ) ) == 1:
       intersection_set.append( character )
-  #intersection_set = list(set( set_character )^set( symmetricdifference_set )) #set_character = list(set( set_character )^set( set_trimmed ))
+    else:
+      if character not in symmetricdifference_set:
+        symmetricdifference_set.append( character )
+  intersection_set = []
+  for character in set_character:
+    if character not in symmetricdifference_set:
+      intersection_set.append( character )
   return intersection_set
 
 def stringtogether_password( length_password: int, set_character_password: list[str] ) -> str:
   if length_password <= 0:
-    raise ValueError("RPwG can't generate a password with a null or negative length.")
+    raise ValueError("Can't generate a password with a null or negative length.")
   if not set_character_password:
-    raise ValueError("RPwG can't generate a password from an empty character set.")
+    raise ValueError("Can't generate a password from an empty character set.")
 
-  string_password: str = ""
+  string_password: str
   
+  string_password = ""
   while 0 < length_password:
-    string_password += str( secrets.choice( set_character_password ) )
+    string_password += str( choice( set_character_password ) )
     length_password -= 1
   return string_password
 
@@ -369,28 +377,30 @@ def interactwith_program() -> str:
   / /'/ / / /'/ / ,-,-,-, / /''-'
  / / | | / ,---' / / / / / /_/'/
 '-'  '-''-'     '-----' '-----'
-V  E  R  S  I  O  N     1  .  6  a"""
+V  E  R  S  I  O  N     1  .  6  b"""
   length_password: int
   set_password: list[str]
   string_mode: str
   flag_mode: int
-  vector_layout: list[str] = []
+  vector_layout: list[str]
   id_layout: str
   
   print(ANSIES.dim+string_splash+ANSIES.reset)
   try:
     length_password = int( input(ANSIES.bold+"password length:\t"+ANSIES.reset) )
   except ( EOFError, ValueError ):
-    length_password = random.randint( 8, 127 )
+    length_password = randint(   8, 127 )
+  
   try:
-    string_mode = input(ANSIES.bold+"cross-layout mode, 'y' for yes or by default 'n' for no:\t"+ANSIES.reset)
+    string_mode = input(ANSIES.bold+"cross-layout--formerly 'QWAZERTY'--mode, 'y' for yes or by default 'n' for no:\t"+ANSIES.reset)
   except EOFError:
     string_mode = "NO"
-  if bool(re.fullmatch(r'\b[Yy]([Ee][Ss])?\b', str(string_mode).strip())):
+  if bool(fullmatch(r'\b[Yy]([Ee][Ss])?\b', str(string_mode).strip())):
     flag_mode = 1
   else:
     flag_mode = 0
   if flag_mode == 1:
+    vector_layout = []
     while True:
       try:
         id_layout = input(ANSIES.bold+"layout, for example \"us\" for ANSI QWERTY:\t"+ANSIES.reset)
@@ -405,6 +415,7 @@ V  E  R  S  I  O  N     1  .  6  a"""
     set_password = set_characters( vector_layout )
   else:
     set_password = set_character
+
   return stringtogether_password( length_password, set_password )
 
 def help_use() -> None:
@@ -416,32 +427,25 @@ rpwg.py -l 8 -m q -k us -k apus -k gb -k apfr -k de
         -r
         -i
         -h""")
-#  return """rpwg.py --length=12 --mode=cross-layout --layout=us --layout=apfr
-#        --random
-#        --interactive
-#        --help
-#rpwg.py length=16 mode=qwazerty layout=us layout=apde
-#rpwg.py -l 6 -m c -k uk -k fr
-#rpwg.py l 8 m q k us k apus k gb k de"""
 
 def main() -> int:
-  #vector_argument = []
-  length_password: int = 0
-  flag_mode: int = 0
-  vector_layout: list[str] = []
-  set_password: list[str] = []
-  string_password: str = ""
-  vector_option: list[tuple[str, str]] = []
-  option: str = ""
-  vector_parameter: list[str] = []
-  parameter: str = ""
+  #vector_argument: list[str] = sys.argv[1:]
+  length_password: int
+  flag_mode: int
+  vector_layout: list[str]
+  set_password: list[str]
+  string_password: str
+  vector_option: list[tuple[str, str]]
+  option: str
+  vector_parameter: list[str]
+  parameter: str
   #string_error: getopt.GetoptError
   #error: ValueError
   
   try:
     vector_option,\
-    vector_parameter = getopt.getopt(
-      sys.argv[1:],
+    vector_parameter = getopt(
+      argv[1:],
       "l:m:k:rihu",
       [
         "length=",
@@ -453,13 +457,13 @@ def main() -> int:
         "use",
       ]
     )
-  except getopt.GetoptError as string_error:
+  except GetoptError as string_error:
     print(string_error)
     help_use()
     return 2
   
   if vector_parameter:
-    print("RPwG doesn't handle "+" ".join( vector_parameter )+'.')
+    print("Can't handle "+" ".join( vector_parameter )+'.')
     help_use()
     return 2
   
@@ -467,17 +471,20 @@ def main() -> int:
     help_use()
     return 2
   
+  length_password = 0
+  flag_mode = 0
+  vector_layout = []
   for option, parameter in vector_option:
     if option in ("--length", "-l"):
       try:
         length_password = int( parameter )
       except ValueError:
-        print("RPwG couldn't understand the password length "+str( parameter )+'.')
+        print("Can't understand the password length "+str( parameter )+'.')
         return 2
     
     elif option in ("--mode", "-m"):
       parameter = str(parameter).strip().lower()
-      if bool(re.fullmatch(r'q(wazerty)?|c(ross(-layout)?)?', parameter)): #if bool( re.match(r'\b(q(wazerty)?|c(ross(-layout)?)?)\b', parameter)):
+      if bool(fullmatch(r'q(wazerty)?|c(ross(-layout)?)?', parameter)):
         flag_mode = 1
       else:
         flag_mode = 0
@@ -486,8 +493,8 @@ def main() -> int:
       vector_layout.append(str(parameter))
 
     elif option in ("--random", "-r"):
-      length_password = random.randint( 8, 127 )
-      flag_mode = random.randint( 0, 1 )
+      length_password = randint(   8, 127 )
+      flag_mode = randint( 0, 1 )
     
     elif option in ("--interactive", "-i"):
       string_password = interactwith_program()
@@ -499,11 +506,11 @@ def main() -> int:
       return 0
   
   if length_password <= 0:
-    length_password = random.randint( 8, 127 )
+    length_password = randint(   8, 127 )
   
   if flag_mode == 1:
     if not vector_layout:
-      vector_layout = ["us", "apfr"]
+      vector_layout = ["us", "apfr"] # Just like in the old days. How long has it been, 10 years already? Fuck, time flies. I'm nearing 1 / 3 of my life. I doubt I'll last forever unfortunately. Thinking about this makes me feel like shit. Have I been wasting it? What should I do with it? I wanna be an MD, the best of them. I don't wanna sit all day in their ridiculously tiny libraries full of idiots and sickos. I don't wanna surround myself with the new French all year. I wanna go back to the Germanic world, just look like the others. I wanna help people. I wanna raise my children. I wanna get paid well, enrich myself endlessly. I wanna lead mankind. I'm not convinced by Socialistan, its groundlessly spiteful assholes and the French dream. I'm fed up with having to stop endless waves of goblin faces from insulting, threatening, bashing, exploiting us, getting them to fuck off. I don't even look like other native Frenchmen anymore anyway. A glimpse of your reflection in the mirror answers many questions in this day and age. National statistical agencies, R, ChatGPT and Maps exist nowadays very fortunately for me.
     try:
       set_password = set_characters( vector_layout )
     except ValueError as error:
@@ -517,11 +524,11 @@ def main() -> int:
   return 0
 
 if __name__ == "__main__":
-  sys.exit( main() )
+  exit( main() )
 
 #	rpwg.py
 #	KVPB's random password generator
-#	1.65 alpha
+#	1.66 beta
 #
 #	Karl V. P. B. `kvpb`    Karl Thomas George West `ktgw`
 #	+33 A BB BB BB BB       +1 (DDD) DDD-DDDD
@@ -537,6 +544,97 @@ if __name__ == "__main__":
 #	 I'm _your_ helping hand,
 #	 your midnight man!
 #	 Your midnight man!'
+#
+#	'What a change come over me.
+#	 You showed me what life could be.
+#	 It's not grime like it used to be.
+#	 Mh, look what you've done to me.
+#	 Oh, I'm giving up for love,
+#	 giving up the way that it used to be.
+#	 I'm giving for love.
+#	 Love makes it easy for me.
+#	 How can I go on each day?
+#	 You took a part of me away.
+#	 Hand in hand, we walk together.
+#	 Looks like you're in for stormy weather.
+#	 Oh, I'm giving up for love,
+#	 giving up the way that it used to be.
+#	 I'm giving for love.
+#	 Love makes it easy for me.
+#	 Look what you've done to me.
+#	 Ain't like it used to be.
+#	 All of my yesterdays are over, over.
+#	 My life has just begun.
+#	 You turn my world around.
+#	 All of my yesterdays are over.
+#	 Oh, I'm giving up, giving it up for love.
+#	 Giving up the way that it used to be.
+#	 I'm givin', giving up, giving it up for love.
+#	 Love makes it easy for me.
+#	 Wish right now that I was free.
+#	 Let's love your offers not kept from me.
+#	 Loving you turned my head around.
+#	 It's not a fad, [if any fucker ever tells me I don't speak English like a native again, I'm fucking kicking his ass,]
+#  I'm so glad I found.
+#	 Oh, I'm giving up for love,
+#	 giving up the way that it used to be.
+#	 I'm giving for love.
+#	 Love makes it easy for me.
+#	 Giving up for love,
+#	 giving up the way that it used to be.
+#	 I'm givin' for love.
+#	 Love makes it easy for me.
+#  Look what you've done to me.
+#  Ain't like it used to be.
+#  All of my yesterdays are over, over.
+#  My life has just begun.
+#  You turned my world around.
+#  All of my yesterdays are over.
+#  Oh, I'm giving up, giving it up for love,
+#  giving up the way that it used to be.
+#  I'm givin' for love.
+#  Love makes it easy for me.
+#  Givin' up for love,
+#  giving up the way that it used to be.
+#  I'm givin' for love.
+#  Love makes it easy for me.
+#	 Givin' up for love.
+#	 Ooh ooh, givin' up for love.
+#	 Givin' up for love.
+#  Love makes it easy for me.
+#  I'm givin' for love,
+#  giving up the way that it used to be.
+#  I'm givin' for love.
+#  Love makes it easy for me.
+#  Givin' for love,
+#  giving up the way that it used to be...'
+#
+# 'Amnésie !
+#  Je veux me perdre dans la ville.
+#  Je me retrouve sur une île.
+#  Amnésie,
+#  amnésie,
+#  amnésie...
+# 'Amnésie !
+#  J'n'ai plus de maison,
+#  plus de lit.
+#  Je vais dormir au paradis.
+#  Amnésie,
+#  amnésie,
+#  amnésie...
+#  Amnésie !
+#  J'ai d'autres rêves,
+#  d'autres envies.
+#  J'oublie les femmes de mes amis.
+#  Amnésie,
+#  amnésie,
+#  amnésie...
+#  Amnésie !
+#  Je ferme à jamais la sortie
+#  du labyrinthe de ma vie.
+#  Amnésie,
+#  amnésie,
+#  amnésie...'
 
 #	Copyright 2026 Karl Vincent Pierre Bertin
 #
