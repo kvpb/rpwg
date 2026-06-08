@@ -277,34 +277,37 @@ def set_characters( ids_layout: list[str] | None = None ) -> list[str]:
       raise ValueError("RPwG doesn't have the layout " + ids_matrix_key[ -1 ] + '.')
     if len( matrix_key[ ids_matrix_key[ -1 ] ] ) != length_set:
       raise ValueError("RPwG couldn't validate the matrix length for the layout " + ids_matrix_key[ -1 ] + '.')
-  print('\t'.join( ids_matrix_key ))
+  #print('\t'.join( ids_matrix_key ))
   index = 0
   while index < length_set:
     ids_key = []
     id_matrix_key = ""
     for id_matrix_key in ids_matrix_key:
       ids_key.append( matrix_key[ id_matrix_key ][ index ] )
-    print( index, '\t', set_character[ index ], '\t', '\t'.join( str( key ) for key in ids_key ) )
+    #print( index, '\t', set_character[ index ], '\t', '\t'.join( str( key ) for key in ids_key ) )
     if len( set( ids_key ) ) != 1:
-      print("\t\t", '\t'.join( str( key ) for key in ids_key ) )
+      #print("\t\t", '\t'.join( str( key ) for key in ids_key ) )
       symmetricdifference_set.append( set_character[ index ] )
     index += 1
-  print( symmetricdifference_set, '\t', len( symmetricdifference_set ) )
+  #print( symmetricdifference_set, '\t', len( symmetricdifference_set ) )
   intersection_set = [
     character
     for character in set_character
     if character not in symmetricdifference_set
   ] #intersection_set = list(set( set_character )^set( symmetricdifference_set )) #set_character = list(set( set_character )^set( set_trimmed ))
-  print( intersection_set, '\t', len( intersection_set ) )
+  #print( intersection_set, '\t', len( intersection_set ) )
   
   return intersection_set
 
-def stringtogether_password( length_password, set_character_password ):
+def stringtogether_password( length_password: int, set_character_password: list[str] ) -> str:
+  if length_password <= 0:
+    raise ValueError("RPwG can't generate a password with a null or negative length.")
+  if not set_character_password:
+    raise ValueError("RPwG can't generate a password from an empty character set.")
   string_password = ""
-  length_set_character = len( set_character_password )
   
   while 0 < length_password:
-    string_password += str( set_character_password[ random.randint( 0, length_set_character - 1 ) ] )
+    string_password += str( secrets.choice( set_character_password ) )
     length_password -= 1
   
   return string_password
@@ -409,15 +412,22 @@ def main():
       string_password = interactwith_program()
       print(string_password)
       return 0
-  string_password = stringtogether_password( length_password, set_characters( [ id_layout_1st, id_layout_2nd ] ) )
+  if length_password <= 0:                     # If --mode=q is set, and --length isn't, length_password remains 0,
+    length_password = random.randint( 8, 127 ) # so I'm fixing this program quick and dirty like this for now.
+  if truth_mode == 1:                                                        # If --mode=q is set,
+    set_password = set_characters( [ id_layout_1st, id_layout_2nd ] )        # id_layout_1st can be null,
+  else:                                                                      # and id_layout_2nd can be null,
+    set_password = set_character                                             # so the layout's gotta be set to for example Apple AZERTY by default,
+  string_password = stringtogether_password( length_password, set_password ) # and so I'm fixing this program quick and dirty like this for now.
+  #string_password = stringtogether_password( length_password, set_characters( [ id_layout_1st, id_layout_2nd ] ) )
   print(ANSIES.reset + string_password)
 
 if __name__ == "__main__":
   main()
 
 #	rpwg.py
-#	random password generator
-#	1.61 beta
+#	KVPB's random password generator
+#	1.62 beta
 #
 #	Karl V. P. B. `kvpb`  Karl Thomas George West `ktgw`
 #	+33 A BB BB BB BB     +1 (DDD) DDD-DDDD
@@ -427,12 +437,12 @@ if __name__ == "__main__":
 #	https://github.com/kvpb
 #
 #	'I can help you!
-#	I can understand!
-#	I can help you!
-#	... To the promised land!
-#	I'm _your_ helping hand,
-#	your midnight man!
-#	Your midnight man!'
+#	 I can understand!
+#	 I can help you!
+#	 ... To the promised land!
+#	 I'm _your_ helping hand,
+#	 your midnight man!
+#	 Your midnight man!'
 
 #	Copyright 2026 Karl Vincent Pierre Bertin
 #
