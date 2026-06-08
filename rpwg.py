@@ -272,11 +272,11 @@ def set_characters( ids_layout: list[str] | None = None ) -> list[str]:
     if id_layout in alias_layout:
       ids_matrix_key.append( alias_layout[id_layout] )
     else:
-      raise ValueError("RPwG doesn't know the layout " + id_layout + '.')
+      raise ValueError("RPwG doesn't know the layout "+id_layout+'.')
     if ids_matrix_key[ -1 ] not in matrix_key:
-      raise ValueError("RPwG doesn't have the layout " + ids_matrix_key[ -1 ] + '.')
+      raise ValueError("RPwG doesn't have the layout "+ids_matrix_key[ -1 ]+'.')
     if len( matrix_key[ ids_matrix_key[ -1 ] ] ) != length_set:
-      raise ValueError("RPwG couldn't validate the matrix length for the layout " + ids_matrix_key[ -1 ] + '.')
+      raise ValueError("RPwG couldn't validate the matrix length for the layout "+ids_matrix_key[ -1 ]+'.')
   #print('\t'.join( ids_matrix_key ))
   index = 0
   while index < length_set:
@@ -313,128 +313,165 @@ def stringtogether_password( length_password: int, set_character_password: list[
   return string_password
 
 def interactwith_program():
-  string_splash = """RANDOM      PASSWORD     GENERATOR
+  string_splash: str = """RANDOM      PASSWORD     GENERATOR
    ,-----, ,-----,         ,-----,
   / /'/ / / /'/ / ,-,-,-, / /''-'
  / / | | / ,---' / / / / / /_/'/
 '-'  '-''-'     '-----' '-----'
 V  E  R  S  I  O  N     1  .  6  b"""
-  length_password = 0
-  set_password = set_character
-  string_mode = ""
-  id_layout_1st = ""
-  id_layout_2nd = ""
-  truth_mode = 0
+  length_password: int
+  set_password: list[str]
+  string_mode: str
+  flag_mode: int
+  vector_layout: list[str] = []
+  id_layout: str
   
-  print(ANSIES.dim + string_splash + ANSIES.reset)
-  
+  print(ANSIES.dim+string_splash+ANSIES.reset)
   try:
-    length_password = int( input(ANSIES.bold + "password length:\t" + ANSIES.reset) )
+    length_password = int( input(ANSIES.bold+"password length:\t"+ANSIES.reset) )
   except:
     length_password = random.randint( 8, 127 )
-  
   try:
-    string_mode = input(ANSIES.bold + "QWAZERTY mode, 'y' for yes or by default 'n' for no:\t" + ANSIES.reset)
+    string_mode = input(ANSIES.bold+"cross-layout mode, 'y' for yes or by default 'n' for no:\t"+ANSIES.reset)
   except:
     string_mode = "NO"
-  
-  if bool(re.match(r'\b[Yy]([Ee][Ss])?\b', str(string_mode))):
-    truth_mode = 1
+  if bool(re.fullmatch(r'\b[Yy]([Ee][Ss])?\b', str(string_mode).strip())):
+    flag_mode = 1
   else:
-    truth_mode = 0
-  
-  if truth_mode == 1:
-    try:
-      id_layout_1st = input(ANSIES.bold + "1st layout, for example \"us\" for ANSI QWERTY:\t" + ANSIES.reset)
-    except:
-      id_layout_1st = ""
-    try:
-      id_layout_2nd = input(ANSIES.bold + "2nd layout, for example \"fr\" for Apple AZERTY:\t" + ANSIES.reset)
-    except:
-      id_layout_2nd = ""
-    if id_layout_2nd == id_layout_1st:
-      id_layout_1st = "us"
-      id_layout_2nd = "fr"
-    set_password = set_characters( [ id_layout_1st, id_layout_2nd ] )
+    flag_mode = 0
+  if flag_mode == 1:
+    while True:
+      try:
+        id_layout = input(ANSIES.bold+"layout, for example \"us\" for ANSI QWERTY:\t"+ANSIES.reset)
+      except EOFError:
+        break
+      id_layout = str(id_layout).strip()
+      if not id_layout:
+        break
+      vector_layout.append(id_layout)
+    if not vector_layout:
+      vector_layout = ["us", "apfr"]
+    set_password = set_characters( vector_layout )
   else:
     set_password = set_character
-  
   return stringtogether_password( length_password, set_password )
+
+def help_use() -> None:
+  print("""rpwg.py --length=12 --mode=cross-layout --layout=us --layout=apfr
+        --random
+        --interactive
+        --help
+rpwg.py -l 8 -m q -k us -k apus -k gb -k de
+        -r
+        -i
+        -h""")
+#  return """rpwg.py --length=12 --mode=cross-layout --layout=us --layout=apfr
+#        --random
+#        --interactive
+#        --help
+#rpwg.py length=16 mode=qwazerty layout=us layout=apde
+#rpwg.py -l 6 -m c -k uk -k fr
+#rpwg.py l 8 m q k us k apus k gb k de"""
 
 def main():
   #vector_argument = []
-  length_password = 0
-  truth_mode = 0
-  id_layout_1st = ""
-  id_layout_2nd = ""
-
-  string_help = """rpwg.py --length=12 --mode=q --1stlayout=us --2ndlayout=fr
-        --random
-        --interactive
-        --help"""
+  length_password: int = 0
+  flag_mode: int = 0
+  vector_layout: list[str] = []
+  set_password: list[str] = []
+  string_password: str
+  vector_option: list[tuple[str, str]]
+  option: str
+  vector_parameter: list[str]
+  parameter: str
   
   try:
-    vector_option, vector_parameter = getopt.getopt(sys.argv[1:], "l:m:1:2:rih", ["length=", "mode=", "1stlayout=", "2ndlayout=", "random", "interactive", "help"])
+    vector_option,\
+    vector_parameter = getopt.getopt(
+      sys.argv[1:],
+      "l:m:k:rihu",
+      [
+        "length=",
+        "mode=",
+        "layout=",
+        "random",
+        "interactive",
+        "help",
+        "use",
+      ]
+    )
   except getopt.GetoptError as string_error:
     print(string_error)
-    sys.exit( 2 )
+    help_use()
+    return 2
+  
+  if vector_parameter:
+    print("RPwG doesn't handle "+" ".join( vector_parameter )+'.')
+    help_use()
+    return 2
+
   if not vector_option:
-    length_password = random.randint( 8, 127 )
-    truth_mode = random.randint( 0, 1 )
-    if truth_mode == 1:
-      string_password = stringtogether_password( length_password, set_characters( [ "us", "apfr" ] ) )
-    else:
-      string_password = stringtogether_password( length_password, set_characters() )
-    print(string_help)
-    return 0
+    help_use()
+    return 2
+
   for option, parameter in vector_option:
-    if option in ("-l", "--length"):
-      if int( parameter ):
+    if option in ("--length", "-l"):
+      try:
         length_password = int( parameter )
+      except ValueError:
+        print("RPwG couldn't understand the password length "+str( parameter )+'.')
+        return 2
+    
+    elif option in ("--mode", "-m"):
+      parameter = str(parameter).strip().lower()
+      if bool(re.fullmatch(r'q(wazerty)?|cross-layout|cross|c', parameter)): #if bool( re.match(r'\b(q(wazerty)?|c(ross(-layout)?)?)\b', parameter)):
+        flag_mode = 1
       else:
-        length_password = random.randint( 8, 127 )
-    elif option in ("-m", "--mode"):
-      if bool(re.match(r'\b[Qq]([Ww][Aa][Zz][Ee][Rr][Tt][Yy])?\b', str(parameter))):
-        truth_mode = 1
-      else:
-        truth_mode = 0
-    elif option in ("-1", "--1stlayout"):
-      id_layout_1st = str(parameter)
-    elif option in ("-2", "--2ndlayout"):
-      id_layout_2nd = str(parameter)
-    elif option in ("-r", "--random"):
+        flag_mode = 0
+
+    elif option in ("--layout", "-k"):
+      vector_layout.append(str(parameter))
+
+    elif option in ("--random", "-r"):
       length_password = random.randint( 8, 127 )
-      truth_mode = random.randint( 0, 1 )
-    elif option in ("-h", "--help"):
-      print(string_help)
-      sys.exit()
-    elif option in ("-i", "--interactive"):
+      flag_mode = random.randint( 0, 1 )
+
+    elif option in ("--interactive", "-i"):
       string_password = interactwith_program()
       print(string_password)
       return 0
-  if length_password <= 0:                     # If --mode=q is set, and --length isn't, length_password remains 0,
-    length_password = random.randint( 8, 127 ) # so I'm fixing this program quick and dirty like this for now.
-  if truth_mode == 1:                                                        # If --mode=q is set,
-    set_password = set_characters( [ id_layout_1st, id_layout_2nd ] )        # id_layout_1st can be null,
-  else:                                                                      # and id_layout_2nd can be null,
-    set_password = set_character                                             # so the layout's gotta be set to for example Apple AZERTY by default,
-  string_password = stringtogether_password( length_password, set_password ) # and so I'm fixing this program quick and dirty like this for now.
-  #string_password = stringtogether_password( length_password, set_characters( [ id_layout_1st, id_layout_2nd ] ) )
-  print(ANSIES.reset + string_password)
+    
+    elif option in ("--help", "-h", "--use", "-u"):
+      help_use()
+      return 0
+    
+  if length_password <= 0:
+    length_password = random.randint( 8, 127 )
+
+  if flag_mode == 1:
+    if not vector_layout:
+      vector_layout = ["us", "apfr"]
+    set_password = set_characters( vector_layout )
+  else:
+    set_password = set_character
+
+  string_password = stringtogether_password( length_password, set_password )
+  print(ANSIES.reset+string_password)
+  return 0
 
 if __name__ == "__main__":
-  main()
+  sys.exit( main() )
 
 #	rpwg.py
 #	KVPB's random password generator
-#	1.62 beta
+#	1.63 beta
 #
-#	Karl V. P. B. `kvpb`  Karl Thomas George West `ktgw`
-#	+33 A BB BB BB BB     +1 (DDD) DDD-DDDD
-#	local-part@domain	    local-part@domain
-#	kvpb.fr
-#	https://x.com/ktgwkvpb
-#	https://github.com/kvpb
+#	Karl V. P. B. `kvpb`    Karl Thomas George West `ktgw`
+#	+33 A BB BB BB BB       +1 (DDD) DDD-DDDD
+#	local-part@domain	      local-part@domain
+#	kvpb.fr                 
+#	https://x.com/ktgwkvpb  
+#	https://github.com/kvpb 
 #
 #	'I can help you!
 #	 I can understand!
