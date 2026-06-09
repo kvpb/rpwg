@@ -256,47 +256,16 @@ matrix_key: dict[str, dict[str, str]] = {
     "Y": "AB01", "y": "AB01", "X": "AB02", "x": "AB02", "C": "AB03", "c": "AB03", "V": "AB04", "v": "AB04", "B": "AB05", "b": "AB05", "N": "AB06", "n": "AB06", "M": "AB07", "m": "AB07", ",": "AB08", ";": "AB08", ".": "AB09", ":": "AB09", "-": "AB10", "?": "AB10", "_": "AB10",
     "*": "BKSL",
   },
+#  "keyboard layout": {
+#    "`": "", "~": "",
+#    "!": "", "1": "", "@": "", "2": "", "3": "", "$": "", "4": "", "%": "", "5": "", "^": "", "6": "", "&": "", "7": "", "*": "", "8": "", "(": "", "9": "", ")": "", "0": "", "_": "", "-": "", "+": "", "=": "",
+#    "Q": "", "q": "", "W": "", "w": "", "E": "", "e": "", "R": "", "r": "", "T": "", "t": "", "Y": "", "y": "", "U": "", "u": "", "I": "", "i": "", "O": "", "o": "", "P": "", "p": "", "[": "", "{": "", "]": "", "}": "",
+#    "A": "", "a": "", "S": "", "s": "", "D": "", "d": "", "F": "", "f": "", "G": "", "g": "", "H": "", "h": "", "J": "", "j": "", "K": "", "k": "", "L": "", "l": "", ":": "", ";": "", "'": "",
+#    "<": "", ">": "",
+#    "Z": "", "z": "", "X": "", "x": "", "C": "", "c": "", "V": "", "v": "", "B": "", "b": "", "N": "", "n": "", "M": "", "m": "", ",": "", ".": "", "/": "", "?": "",
+#    "|": "",
+#  },
 }
-#matrix_key = {
-#  "ANSI QWERTY": [
-#      1,    4,    5,    7,   39,    9,   10,    8,   12,   49,   11,   50,   51,   10,
-#      1,    2,    3,    4,    5,    6,    7,    8,    9,   38,   38,   49,   12,   50,
-#     51,    2,   29,   46,   44,   31,   17,   32,   33,   34,   22,   35,   36,   37,
-#     48,   47,   23,   24,   15,   18,   30,   19,   21,   45,   16,   43,   20,   42,
-#     25,   26,    6,   11,    0,   29,   46,   44,   31,   17,   32,   33,   34,   22,
-#     35,   36,   37,   48,   47,   23,   24,   15,   18,   30,   19,   21,   45,   16,
-#     43,   20,   42,   25,   27,   26,    0
-#  ],
-#  "Apple GB QWERTY": [
-#    
-#  ],
-#  "ISO QWERTY": [
-#    
-#  ],
-#  "Apple AZERTY": [
-#      8,   26,   39,    1,    4,    5,   11,   26,   52,   49,   12,   50,   51,   10,
-#      1,    2,    3,    4,    5,    6,    7,    8,    9,   51,   50,   42,   52,   42,
-#     49,    0,   15,   47,   45,   31,   17,   32,   33,   34,   22,   35,   36,   37,
-#     38,   48,   23,   24,   29,   18,   30,   19,   21,   46,   43,   44,   20,   16,
-#      5,   11,   25,   12,   40,   15,   47,   45,   31,   17,   32,   33,   34,   22,
-#     35,   36,   37,   38,   48,   23,   24,   29,   18,   30,   19,   21,   46,   43,
-#     44,   20,   16,    5,   37,   11,   48
-#  ],
-#  "ISO AZERTY": [
-#    
-#  ],
-#  "Apple QWERTZ": [
-#    
-#  ],
-#  "ISO QWERTZ": [
-#    
-#  ],
-#}
-#set_trimmed = [
-#  '!',  '$',  '%',  '&', '\'',  '(',  ')',  '*',  ',',  '-',  '.', '/',  ':',  ';',
-#  '?',  '@',  'A',  'M',  'Q',  'W',  'Z',  '[', ']',  '^',  '`',  'a',  'm',  'q',
-#  'w',  'z',  '{',  '|',  '}', '~'
-#] # in ASCII order.
 
 alias_layout: dict[str, str] = {
   "apus": "ANSI QWERTY",
@@ -312,6 +281,7 @@ alias_layout: dict[str, str] = {
   "fr":   "ISO AZERTY", # ISO FR AZERTY
   "apde": "Apple German", # Apple DE QWERTZ
   "de":   "ISO QWERTZ", # ISO DE QWERTZ
+#  "kl": "keyboard layout",
 }
 
 def set_characters( ids_layout: list[str] | None = None ) -> list[str]:
@@ -335,9 +305,9 @@ def set_characters( ids_layout: list[str] | None = None ) -> list[str]:
     if id_layout in alias_layout:
       ids_matrix_key.append( alias_layout[id_layout] )
     else:
-      raise ValueError("RPwG doesn't know the layout "+id_layout+'.')
+      raise ValueError("Don't know the layout "+id_layout+'.')
     if ids_matrix_key[ -1 ] not in matrix_key:
-      raise ValueError("RPwG doesn't have the layout "+ids_matrix_key[ -1 ]+'.')
+      raise ValueError("Don't have the layout "+ids_matrix_key[ -1 ]+'.')
   for character in set_character:
     ids_key = []
     id_matrix_key = ""
@@ -377,7 +347,7 @@ def interactwith_program() -> str:
   / /'/ / / /'/ / ,-,-,-, / /''-'
  / / | | / ,---' / / / / / /_/'/
 '-'  '-''-'     '-----' '-----'
-V  E  R  S  I  O  N     1  .  6  b"""
+V  E  R  .           1  .  6  7  b"""
   length_password: int
   set_password: list[str]
   string_mode: str
@@ -387,12 +357,13 @@ V  E  R  S  I  O  N     1  .  6  b"""
   
   print(ANSIES.dim+string_splash+ANSIES.reset)
   try:
-    length_password = int( input(ANSIES.bold+"password length:\t"+ANSIES.reset) )
+    length_password = int( input(ANSIES.dim+"password "+ANSIES.reset+ANSIES.bold+"length"+ANSIES.reset+ANSIES.dim+":\t"+ANSIES.reset+ANSIES.invert) )
   except ( EOFError, ValueError ):
     length_password = randint(   8, 127 )
   
   try:
-    string_mode = input(ANSIES.bold+"cross-layout--formerly 'QWAZERTY'--mode, 'y' for yes or by default 'n' for no:\t"+ANSIES.reset)
+    string_mode = input(ANSIES.reset+ANSIES.bold+"cross-layout"+ANSIES.reset+ANSIES.dim+""" password,
+"""+ANSIES.reset+ANSIES.underline+"y"+ANSIES.reset+"es or by default "+ANSIES.underline+"n"+ANSIES.reset+"o"+ANSIES.reset+ANSIES.dim+":\t"+ANSIES.reset+ANSIES.invert)
   except EOFError:
     string_mode = "NO"
   if bool(fullmatch(r'\b[Yy]([Ee][Ss])?\b', str(string_mode).strip())):
@@ -403,7 +374,7 @@ V  E  R  S  I  O  N     1  .  6  b"""
     vector_layout = []
     while True:
       try:
-        id_layout = input(ANSIES.bold+"layout, for example \"us\" for ANSI QWERTY:\t"+ANSIES.reset)
+        id_layout = input(ANSIES.reset+ANSIES.bold+ANSIES.dim+"keyboard "+ANSIES.reset+ANSIES.bold+"layout"+ANSIES.reset+ANSIES.dim+":\t"+ANSIES.reset+ANSIES.invert)
       except EOFError:
         break
       id_layout = str(id_layout).strip()
@@ -419,11 +390,13 @@ V  E  R  S  I  O  N     1  .  6  b"""
   return stringtogether_password( length_password, set_password )
 
 def help_use() -> None:
-  print("""rpwg.py --length=12 --mode=cross-layout --layout=us --layout=apfr
+  print("""rpwg.py
+        --length=12 --mode=cross-layout --layout=us --layout=apfr
         --random
         --interactive
         --help
-rpwg.py -l 8 -m q -k us -k apus -k gb -k apfr -k de
+rpwg.py
+        -l 8 -m q -k us -k de -k gb -k fr
         -r
         -i
         -h""")
@@ -497,7 +470,11 @@ def main() -> int:
       flag_mode = randint( 0, 1 )
     
     elif option in ("--interactive", "-i"):
-      string_password = interactwith_program()
+      try:
+        string_password = interactwith_program()
+      except ValueError as error:
+        print(error)
+        return 2
       print(string_password)
       return 0
     
@@ -528,7 +505,7 @@ if __name__ == "__main__":
 
 #	rpwg.py
 #	KVPB's random password generator
-#	1.66 beta
+#	1.67 beta
 #
 #	Karl V. P. B. `kvpb`    Karl Thomas George West `ktgw`
 #	+33 A BB BB BB BB       +1 (DDD) DDD-DDDD
@@ -575,7 +552,7 @@ if __name__ == "__main__":
 #	 Let's love your offers not kept from me.
 #	 Loving you turned my head around.
 #	 It's not a fad, [if any fucker ever tells me I don't speak English like a native again, I'm fucking kicking his ass,]
-#  I'm so glad I found.
+#	 I'm so glad I found.
 #	 Oh, I'm giving up for love,
 #	 giving up the way that it used to be.
 #	 I'm giving for love.
@@ -584,57 +561,57 @@ if __name__ == "__main__":
 #	 giving up the way that it used to be.
 #	 I'm givin' for love.
 #	 Love makes it easy for me.
-#  Look what you've done to me.
-#  Ain't like it used to be.
-#  All of my yesterdays are over, over.
-#  My life has just begun.
-#  You turned my world around.
-#  All of my yesterdays are over.
-#  Oh, I'm giving up, giving it up for love,
-#  giving up the way that it used to be.
-#  I'm givin' for love.
-#  Love makes it easy for me.
-#  Givin' up for love,
-#  giving up the way that it used to be.
-#  I'm givin' for love.
-#  Love makes it easy for me.
+#	 Look what you've done to me.
+#	 Ain't like it used to be.
+#	 All of my yesterdays are over, over.
+#	 My life has just begun.
+#	 You turned my world around.
+#	 All of my yesterdays are over.
+#	 Oh, I'm giving up, giving it up for love,
+#	 giving up the way that it used to be.
+#	 I'm givin' for love.
+#	 Love makes it easy for me.
+#	 Givin' up for love,
+#	 giving up the way that it used to be.
+#	 I'm givin' for love.
+#	 Love makes it easy for me.
 #	 Givin' up for love.
 #	 Ooh ooh, givin' up for love.
 #	 Givin' up for love.
-#  Love makes it easy for me.
-#  I'm givin' for love,
-#  giving up the way that it used to be.
-#  I'm givin' for love.
-#  Love makes it easy for me.
-#  Givin' for love,
-#  giving up the way that it used to be...'
+#	 Love makes it easy for me.
+#	 I'm givin' for love,
+#	 giving up the way that it used to be.
+#	 I'm givin' for love.
+#	 Love makes it easy for me.
+#	 Givin' for love,
+#	 giving up the way that it used to be...'
 #
-# 'Amnésie !
-#  Je veux me perdre dans la ville.
-#  Je me retrouve sur une île.
-#  Amnésie,
-#  amnésie,
-#  amnésie...
-# 'Amnésie !
-#  J'n'ai plus de maison,
-#  plus de lit.
-#  Je vais dormir au paradis.
-#  Amnésie,
-#  amnésie,
-#  amnésie...
-#  Amnésie !
-#  J'ai d'autres rêves,
-#  d'autres envies.
-#  J'oublie les femmes de mes amis.
-#  Amnésie,
-#  amnésie,
-#  amnésie...
-#  Amnésie !
-#  Je ferme à jamais la sortie
-#  du labyrinthe de ma vie.
-#  Amnésie,
-#  amnésie,
-#  amnésie...'
+#	'Amnésie !
+#	 Je veux me perdre dans la ville.
+#	 Je me retrouve sur une île.
+#	 Amnésie,
+#	 amnésie,
+#	 amnésie...
+#	'Amnésie !
+#	 J'n'ai plus de maison,
+#	 plus de lit.
+#	 Je vais dormir au paradis.
+#	 Amnésie,
+#	 amnésie,
+#	 amnésie...
+#	 Amnésie !
+#	 J'ai d'autres rêves,
+#	 d'autres envies.
+#	 J'oublie les femmes de mes amis.
+#	 Amnésie,
+#	 amnésie,
+#	 amnésie...
+#	 Amnésie !
+#	 Je ferme à jamais la sortie
+#	 du labyrinthe de ma vie.
+#	 Amnésie,
+#	 amnésie,
+#	 amnésie...'
 
 #	Copyright 2026 Karl Vincent Pierre Bertin
 #
