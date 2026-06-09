@@ -266,7 +266,6 @@ matrix_key: dict[str, dict[str, str]] = {
 #    "|": "",
 #  },
 }
-
 alias_layout: dict[str, str] = {
   "apus": "ANSI QWERTY",
   "us":   "ANSI QWERTY",
@@ -292,7 +291,6 @@ def set_characters( ids_layout: list[str] | None = None ) -> list[str]:
   
   intersection_set: list[str] = []
   symmetricdifference_set: list[str] = []
-  length_set: int = len( set_character )
   ids_matrix_key: list[str] = [] #layouts = 
   id_layout: str
   id_matrix_key: str
@@ -341,13 +339,24 @@ def stringtogether_password( length_password: int, set_character_password: list[
     length_password -= 1
   return string_password
 
+def convert_cardinal_to_ordinal( number: int ) -> str: # Purely ~economic~ aesthetic.
+  if 10 <= number % 100 <= 20:
+    return str( number )+"th"
+  if number % 10 == 1:
+    return str( number )+"st"
+  if number % 10 == 2:
+    return str( number )+"nd"
+  if number % 10 == 3:
+    return str( number )+"rd"
+  return str( number )+"th"
+
 def interactwith_program() -> str:
   string_splash: str = """RANDOM      PASSWORD     GENERATOR
    ,-----, ,-----,         ,-----,
   / /'/ / / /'/ / ,-,-,-, / /''-'
  / / | | / ,---' / / / / / /_/'/
 '-'  '-''-'     '-----' '-----'
-V  E  R  .           1  .  6  7  b"""
+V  E  R  S  I  O  N     1  .  6  7"""
   length_password: int
   set_password: list[str]
   string_mode: str
@@ -359,7 +368,7 @@ V  E  R  .           1  .  6  7  b"""
   try:
     length_password = int( input(ANSIES.dim+"password "+ANSIES.reset+ANSIES.bold+"length"+ANSIES.reset+ANSIES.dim+":\t"+ANSIES.reset+ANSIES.invert) )
   except ( EOFError, ValueError ):
-    length_password = randint(   8, 127 )
+    length_password = randint( 8, 127 )
   
   try:
     string_mode = input(ANSIES.reset+ANSIES.bold+"cross-layout"+ANSIES.reset+ANSIES.dim+""" password,
@@ -374,11 +383,12 @@ V  E  R  .           1  .  6  7  b"""
     vector_layout = []
     while True:
       try:
-        id_layout = input(ANSIES.reset+ANSIES.bold+ANSIES.dim+"keyboard "+ANSIES.reset+ANSIES.bold+"layout"+ANSIES.reset+ANSIES.dim+":\t"+ANSIES.reset+ANSIES.invert)
+        id_layout = input(ANSIES.reset+ANSIES.bold+convert_cardinal_to_ordinal( len( vector_layout ) + 1 )+ANSIES.reset+ANSIES.dim+" keyboard "+ANSIES.reset+ANSIES.bold+"layout"+ANSIES.reset+ANSIES.dim+":\t"+ANSIES.reset+ANSIES.invert)
       except EOFError:
         break
       id_layout = str(id_layout).strip()
       if not id_layout:
+        print(ANSIES.reset+"\x1B[1A\x1B[2K", end="")
         break
       vector_layout.append(id_layout)
     if not vector_layout:
@@ -396,15 +406,18 @@ def help_use() -> None:
         --interactive
         --help
 rpwg.py
-        -l 8 -m q -k us -k de -k gb -k fr
-        -r
-        -i
-        -h""")
+         -l 8 -m c -k us -k de -k gb -k fr
+         -r
+         -i
+         -h""")
 
 def main() -> int:
   #vector_argument: list[str] = sys.argv[1:]
   length_password: int
   flag_mode: int
+  flag_usage: int
+  flag_interactivity: int
+  flag_randomness: int
   vector_layout: list[str]
   set_password: list[str]
   string_password: str
@@ -440,19 +453,22 @@ def main() -> int:
     help_use()
     return 2
   
-  if not vector_option:
-    help_use()
-    return 2
+  if not vector_option: #if not vector_option:
+    flag_mode = 1       #  help_use()
+                        #  return 2
   
   length_password = 0
-  flag_mode = 0
+  flag_mode = -1
+  flag_usage = 0
+  flag_interactivity = 0
+  flag_randomness = 0
   vector_layout = []
   for option, parameter in vector_option:
     if option in ("--length", "-l"):
       try:
         length_password = int( parameter )
       except ValueError:
-        print("Can't understand the password length "+str( parameter )+'.')
+        print("Can't understand a password length of "+str( parameter )+'.')
         return 2
     
     elif option in ("--mode", "-m"):
@@ -466,28 +482,39 @@ def main() -> int:
       vector_layout.append(str(parameter))
 
     elif option in ("--random", "-r"):
-      length_password = randint(   8, 127 )
-      flag_mode = randint( 0, 1 )
-    
+      flag_randomness = 1
+
     elif option in ("--interactive", "-i"):
-      try:
-        string_password = interactwith_program()
-      except ValueError as error:
-        print(error)
-        return 2
-      print(string_password)
-      return 0
-    
+      flag_interactivity = 1
+      
     elif option in ("--help", "-h", "--use", "-u"):
-      help_use()
-      return 0
-  
+      flag_usage = 1
+
+  if flag_usage == 1:
+    help_use()
+    return 0
+
+  if flag_randomness == 1:
+    length_password = randint( 8, 127 )
+    flag_mode = randint( 0, 1 )
+    
+  elif flag_interactivity == 1:
+    try:
+      string_password = interactwith_program()
+    except ValueError as error:
+      print(error)
+      return 2
+    print(string_password)
+    return 0
+      
   if length_password <= 0:
-    length_password = randint(   8, 127 )
+    length_password = randint( 8, 127 )
   
+  if flag_mode < 0:
+    flag_mode = randint( 0, 1 )
   if flag_mode == 1:
     if not vector_layout:
-      vector_layout = ["us", "apfr"] # Just like in the old days. How long has it been, 10 years already? Fuck, time flies. I'm nearing 1 / 3 of my life. I doubt I'll last forever unfortunately. Thinking about this makes me feel like shit. Have I been wasting it? What should I do with it? I wanna be an MD, the best of them. I don't wanna sit all day in their ridiculously tiny libraries full of idiots and sickos. I don't wanna surround myself with the new French all year. I wanna go back to the Germanic world, just look like the others. I wanna help people. I wanna raise my children. I wanna get paid well, enrich myself endlessly. I wanna lead mankind. I'm not convinced by Socialistan, its groundlessly spiteful assholes and the French dream. I'm fed up with having to stop endless waves of goblin faces from insulting, threatening, bashing, exploiting us, getting them to fuck off. I don't even look like other native Frenchmen anymore anyway. A glimpse of your reflection in the mirror answers many questions in this day and age. National statistical agencies, R, ChatGPT and Maps exist nowadays very fortunately for me.
+      vector_layout = ["us", "apfr"] # Default to a QWAZERTY password like back in the days.
     try:
       set_password = set_characters( vector_layout )
     except ValueError as error:
@@ -505,14 +532,14 @@ if __name__ == "__main__":
 
 #	rpwg.py
 #	KVPB's random password generator
-#	1.67 beta
+#	1.67
 #
-#	Karl V. P. B. `kvpb`    Karl Thomas George West `ktgw`
-#	+33 A BB BB BB BB       +1 (DDD) DDD-DDDD
-#	local-part@domain	      local-part@domain
-#	kvpb.fr                 
-#	https://x.com/ktgwkvpb  
-#	https://github.com/kvpb 
+#	Karl V. P. B. `kvpb`  Karl Thomas George West `ktgw`
+#	+33 A BB BB BB BB     +1 (DDD) DDD-DDDD
+#	local-part@domain     local-part@domain
+#	kvpb.fr
+#	https://x.com/ktgwkvpb
+#	https://github.com/kvpb
 #
 #	'I can help you!
 #	 I can understand!
