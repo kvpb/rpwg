@@ -3,8 +3,14 @@
 from secrets import choice
 from random import randint
 from re import fullmatch
+from os import name
+if name == "nt":
+  from msvcrt import getwch
+else:
+  import termios
+  import tty
 from getopt import getopt, GetoptError
-from sys import argv, exit
+from sys import argv, stdin, exit
 
 class ANSIES: # ANSI escape sequences
   # SGR parameters
@@ -350,16 +356,105 @@ def convert_cardinal_to_ordinal( number: int ) -> str: # Purely ~economic~ aesth
     return str( number )+"rd"
   return str( number )+"th"
 
+def get_answered_faster(string_question: str, alias_answer: dict[str, str], string_answer_default: str | None = None ) -> str:
+  string_answer: str
+  character_string_answer: str
+  alias_string_answer: str
+  filedescriptor_STDIN: int
+  attributes_terminal_original: list
+  attributes_terminal_current: list
+  flag_possibility_string_answer: bool
+  
+  print(string_question, end="", flush = True )
+  if not stdin.isatty():
+    try:
+      string_answer = input().strip().lower()
+    except EOFError:
+      string_answer = ""
+    if not string_answer and string_answer_default is not None:
+      return string_answer_default
+    if string_answer in alias_answer:
+      return alias_answer[ string_answer ]
+    raise ValueError("Don't know the answer "+string_answer+'.')
+  
+  string_answer = ""
+  if name != "nt":
+    filedescriptor_STDIN = stdin.fileno()
+    attributes_terminal_original = termios.tcgetattr( filedescriptor_STDIN )
+    tty.setcbreak( filedescriptor_STDIN )
+    attributes_terminal_current = termios.tcgetattr( filedescriptor_STDIN )
+    attributes_terminal_current[ 3 ] &= ~termios.ECHO
+    termios.tcsetattr( filedescriptor_STDIN, termios.TCSANOW, attributes_terminal_current )
+  try:
+    while True:
+      if name == "nt":
+        character_string_answer = getwch()
+        if character_string_answer in ("\x00", "\xE0"):
+          getwch()
+          continue
+      else:
+        character_string_answer = stdin.read( 1 )
+      if character_string_answer == "\x03":
+        print()
+        raise KeyboardInterrupt
+      if character_string_answer in ("\r", "\n"):
+        print()
+        if not string_answer and string_answer_default is not None:
+          return string_answer_default
+        if string_answer in alias_answer:
+          return alias_answer[ string_answer ]
+        string_answer = ""
+        continue
+      if character_string_answer in ("\x08", "\x7F"):
+        if string_answer:
+          string_answer = string_answer[:-1]
+          print("\b \b", end="", flush = True )
+        continue
+      if not character_string_answer.isprintable():
+        continue
+      character_string_answer = character_string_answer.lower()
+      flag_possibility_string_answer = False
+      for alias_string_answer in alias_answer:
+        if alias_string_answer.startswith(string_answer+character_string_answer):
+          flag_possibility_string_answer = True
+          break
+      if flag_possibility_string_answer:
+        string_answer += character_string_answer
+        print(character_string_answer, end="", flush = True )
+        if string_answer in alias_answer:
+          print()
+          return alias_answer[ string_answer ]
+        continue
+      if string_answer:
+        print( len( string_answer ) * "\b \b", end="", flush = True )
+        string_answer = ""
+      for alias_string_answer in alias_answer:
+        if alias_string_answer.startswith(character_string_answer):
+          flag_possibility_string_answer = True
+          break
+      else:
+        flag_possibility_string_answer = False
+      if flag_possibility_string_answer:
+        string_answer = character_string_answer
+        print(character_string_answer, end="", flush = True )
+        if string_answer in alias_answer:
+          print()
+          return alias_answer[ string_answer ]
+  
+  finally:
+    if name != "nt":
+      termios.tcsetattr( filedescriptor_STDIN, termios.TCSADRAIN, attributes_terminal_original )
+
 def interactwith_program() -> str:
   string_splash: str = """RANDOM      PASSWORD     GENERATOR
    ,-----, ,-----,         ,-----,
   / /'/ / / /'/ / ,-,-,-, / /''-'
  / / | | / ,---' / / / / / /_/'/
 '-'  '-''-'     '-----' '-----'
-V  E  R  S  I  O  N     1  .  6  7"""
+V E R S I O N          1 . 6 7   B"""
   length_password: int
   set_password: list[str]
-  string_mode: str
+  #string_mode: str
   flag_mode: int
   vector_layout: list[str]
   id_layout: str
@@ -370,27 +465,34 @@ V  E  R  S  I  O  N     1  .  6  7"""
   except ( EOFError, ValueError ):
     length_password = randint( 8, 127 )
   
-  try:
-    string_mode = input(ANSIES.reset+ANSIES.bold+"cross-layout"+ANSIES.reset+ANSIES.dim+""" password,
-"""+ANSIES.reset+ANSIES.underline+"y"+ANSIES.reset+"es or by default "+ANSIES.underline+"n"+ANSIES.reset+"o"+ANSIES.reset+ANSIES.dim+":\t"+ANSIES.reset+ANSIES.invert)
-  except EOFError:
-    string_mode = "NO"
-  if bool(fullmatch(r'\b[Yy]([Ee][Ss])?\b', str(string_mode).strip())):
-    flag_mode = 1
-  else:
-    flag_mode = 0
+  flag_mode = int( get_answered_faster(ANSIES.reset+ANSIES.bold+"cross-layout"+ANSIES.reset+ANSIES.dim+""" password,
+"""+ANSIES.reset+ANSIES.underline+"y"+ANSIES.reset+"es or by default "+ANSIES.underline+"n"+ANSIES.reset+"o"+ANSIES.reset+ANSIES.dim+":\t"+ANSIES.reset+ANSIES.invert, {"y": "1", "n": "0"}, "0") )
+  #try:
+  #  string_mode = input(ANSIES.reset+ANSIES.bold+"cross-layout"+ANSIES.reset+ANSIES.dim+""" password,\n"""+ANSIES.reset+ANSIES.underline+"y"+ANSIES.reset+"es or by default "+ANSIES.underline+"n"+ANSIES.reset+"o"+ANSIES.reset+ANSIES.dim+":\t"+ANSIES.reset+ANSIES.invert)
+  #except EOFError:
+  #  string_mode = "NO"
+  #if bool(fullmatch(r'\b[Yy]([Ee][Ss])?\b', str(string_mode).strip())):
+  #  flag_mode = 1
+  #else:
+  #  flag_mode = 0
   if flag_mode == 1:
     vector_layout = []
     while True:
-      try:
-        id_layout = input(ANSIES.reset+ANSIES.bold+convert_cardinal_to_ordinal( len( vector_layout ) + 1 )+ANSIES.reset+ANSIES.dim+" keyboard "+ANSIES.reset+ANSIES.bold+"layout"+ANSIES.reset+ANSIES.dim+":\t"+ANSIES.reset+ANSIES.invert)
-      except EOFError:
-        break
-      id_layout = str(id_layout).strip()
+      id_layout = get_answered_faster(ANSIES.reset+ANSIES.bold+convert_cardinal_to_ordinal( len( vector_layout ) + 1 )+ANSIES.reset+ANSIES.dim+" keyboard "+ANSIES.reset+ANSIES.bold+"layout"+ANSIES.reset+ANSIES.dim+":\t"+ANSIES.reset+ANSIES.invert, {id_layout: id_layout for id_layout in alias_layout}, "")
       if not id_layout:
         print(ANSIES.reset+"\x1B[1A\x1B[2K", end="")
         break
       vector_layout.append(id_layout)
+    #while True:
+    #  try:
+    #    id_layout = input(ANSIES.reset+ANSIES.bold+convert_cardinal_to_ordinal( len( vector_layout ) + 1 )+ANSIES.reset+ANSIES.dim+" keyboard "+ANSIES.reset+ANSIES.bold+"layout"+ANSIES.reset+ANSIES.dim+":\t"+ANSIES.reset+ANSIES.invert)
+    #  except EOFError:
+    #    break
+    #  id_layout = str(id_layout).strip()
+    #  if not id_layout:
+    #    print(ANSIES.reset+"\x1B[1A\x1B[2K", end="")
+    #    break
+    #  vector_layout.append(id_layout)
     if not vector_layout:
       vector_layout = ["us", "apfr"]
     set_password = set_characters( vector_layout )
@@ -501,6 +603,9 @@ def main() -> int:
   elif flag_interactivity == 1:
     try:
       string_password = interactwith_program()
+    except KeyboardInterrupt:
+      print(ANSIES.reset)
+      return 130
     except ValueError as error:
       print(error)
       return 2
