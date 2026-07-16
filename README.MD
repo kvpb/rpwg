@@ -1,5 +1,5 @@
-<p align='center'><a href=''><img src='https://gistcdn.githack.com/kvpb/bfc847c17e106fb8f99c9bdf05d408c7/raw/0d07ffebbd93a89ecc448eba8827a4b9679c4208/aceofclubs.svg' alt="Karl Vincent Pierre Bertin AKA Karl Thomas George West's"></a></p>
-<p align='center'><a href='https://github.com/kvpb/.files/blob/master/bin/rpwg.py'><img src='https://gistcdn.githack.com/kvpb/c9d1aa35c62862e73c50836dc49dbc66/raw/d37be6b1729e8f5d11a45a84753de34ecad92214/rpwg.svg' alt="an illustration for Karl Vincent Pierre Bertin AKA Karl Thomas George West's cross-layout random password generator"></a></p>
+<p align='center'><a href=''><img src='https://gistcdn.githack.com/kvpb/bfc847c17e106fb8f99c9bdf05d408c7/raw/73ea74e68c8543efb617120f2af2d6cbd2c42f22/aceofclubs.svg' alt="Karl Vincent Pierre Bertin AKA Karl Thomas George West's"></a></p>
+<p align='center'><a href='https://github.com/kvpb/.files/blob/master/bin/rpwg.py'><img src='https://gistcdn.githack.com/kvpb/c9d1aa35c62862e73c50836dc49dbc66/raw/8023f43cc7eb3d7849511deada26a71b2bad29b3/rpwg.svg' alt="an illustration for Karl Vincent Pierre Bertin AKA Karl Thomas George West's cross-layout random password generator"></a></p>
 
 ![platform](https://gistcdn.githack.com/kvpb/ed57eb3a03f2b5338fbede97e7cf296b/raw/ea6556bb04f592433023533ddbd931cc7d23e92b/apple-F6F6F6D5E1ED1E72F21AD5FD-madeona-1AD5FD1E72F2-mac-F6F6F6D5E1ED.svg) ![platform](https://gistcdn.githack.com/kvpb/ed57eb3a03f2b5338fbede97e7cf296b/raw/ea6556bb04f592433023533ddbd931cc7d23e92b/ubuntu-F6F6F6D5E1ED1E72F21AD5FD-madeona-1AD5FD1E72F2-linuxbox-F6F6F6D5E1ED.svg) ![platform](https://gistcdn.githack.com/kvpb/ed57eb3a03f2b5338fbede97e7cf296b/raw/ea6556bb04f592433023533ddbd931cc7d23e92b/android-F6F6F6D5E1ED1E72F21AD5FD-madeonan-1AD5FD1E72F2-androidphone-F6F6F6D5E1ED.svg)
 
@@ -115,9 +115,9 @@ to the author, or open an issue at https://github.com/kvpb/rpwg/issues.
                          ~7~^^^^^^~~~~^^^::.                           
 ```
 <br>
-<p align='center'><a href='http://kvpb.co'><img src='https://gistcdn.githack.com/kvpb/c80594e9079e857c55c36dec49a1a2d7/raw/eec54d5821dc092ad910635141c4e4feebf07565/kvpbssymbol.svg'></a><br>
+<p align='center'><a href='http://kvpb.co'><img src='https://gistcdn.githack.com/kvpb/c80594e9079e857c55c36dec49a1a2d7/raw/eec54d5821dc092ad910635141c4e4feebf07565/kvpbssymbol.svg'></a><br><!--
 <b>Karl V. P. B. `<code>kvpb</code>`<br>
 カール・ビンセント・ピエール・ベルティン</b><br>
 <b>AKA&nbsp;&nbsp;Karl Thomas George West `<code>ktgw</code>`<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;カール・トーマス・ジョージ・ウェスト</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;カール・トーマス・ジョージ・ウェスト</b><br>-->
 <img src='https://gistcdn.githack.com/kvpb/f5f75716dd024cc48f8dc28176c0b642/raw/e5344bebf926b378faeb208724ae97f4e06639ca/kvpbsesrbrating.svg'></p>
