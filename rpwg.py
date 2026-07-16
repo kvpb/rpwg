@@ -6,6 +6,8 @@ from re import fullmatch
 from os import name
 if name == "nt":
   from msvcrt import getwch
+  from ctypes import byref, windll
+  from ctypes.wintypes import DWORD, HANDLE
 else:
   import termios
   import tty
@@ -451,7 +453,7 @@ def interactwith_program() -> str:
   / /'/ / / /'/ / ,-,-,-, / /''-'
  / / | | / ,---' / / / / / /_/'/
 '-'  '-''-'     '-----' '-----'
-V E R S I O N          1 . 6 7   B"""
+V E R S I O N          1 . 6 7   C"""
   length_password: int
   set_password: list[str]
   #string_mode: str
@@ -633,11 +635,26 @@ def main() -> int:
   return 0
 
 if __name__ == "__main__":
-  exit( main() )
+  if name == "nt":
+    windll.kernel32.GetStdHandle.restype = HANDLE
+    objecthandle_STDOUT = HANDLE( windll.kernel32.GetStdHandle( -11 ) )
+    mode_STDOUT = DWORD()
+    availability_Windowsconsolemode = bool( windll.kernel32.GetConsoleMode( objecthandle_STDOUT, byref( mode_STDOUT ) ) )
+    if availability_Windowsconsolemode:
+      mode_STDOUT_initial = mode_STDOUT.value
+      windll.kernel32.SetConsoleMode( objecthandle_STDOUT, mode_STDOUT_initial | 0x0001 | 0x0004 ) # 0x0001: ENABLE_PROCESSED_OUTPUT; 0x0004: ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+  try:
+    code_exit = main()
+  finally:
+    if name == "nt" and availability_Windowsconsolemode:
+      windll.kernel32.SetConsoleMode( objecthandle_STDOUT, mode_STDOUT_initial )
+  exit( code_exit )
+  # Enable the Windows console to process virtual terminal sequences while preserving its initial mode.
+  #exit( main() ) # PowerShell, Windows, Microsoft, Bill Gates... Fucking piles of shit.
 
 #	rpwg.py
 #	KVPB's random password generator
-#	1.67
+#	1.67 C
 #
 #	Karl V. P. B. `kvpb`  Karl Thomas George West `ktgw`
 #	+33 A BB BB BB BB     +1 (DDD) DDD-DDDD
